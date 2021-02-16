@@ -12,10 +12,12 @@ function Quotes() {
     const [quotes, setQuotes] = useState([])
     const [obj, setObj] = useState({tags: '', amount: 5, authorId: ''})
     const [authors, setAuthors] = useState([])
+    const [allTags, setAllTags] = useState([])
 
     useEffect(() => {
         fetchAll()
         fetchAuthor()
+        fetchAllTags()
     }, [])
 
     console.log(quotes)
@@ -23,6 +25,8 @@ function Quotes() {
     const quotesItems = quotes?.map((item, i) => <Cards author={item.author} content={item.content} count={item.count} id={item._id}/>)
 
     const authorItems = authors?.map((item, i) => <Option value={item._id}>{item.name}</Option>)
+
+    const allTagsItems = allTags?.map((item, i) => <Option value={item.name}>{item.name}</Option>)
 
     const amount = (limit) => {
         setObj({...obj, amount: limit})
@@ -41,6 +45,10 @@ function Quotes() {
 
     const fetchAuthor = () => {
         axios.get(`https://api.quotable.io/authors`).then(res => setAuthors(res.data.results))
+    }
+
+    const fetchAllTags = () => {
+        axios.get(`https://api.quotable.io/tags`).then(res => setAllTags(res.data))
     }
 
     const handleAuthors = (id) => {
@@ -64,13 +72,9 @@ function Quotes() {
                             allowClear
                             style={{ width: '100%' }}
                             placeholder="tags"
-                            defaultValue={['friendship']}
                             onChange={tags}
                             >
-                                <Option value='friendship' tag='friendship'>friendship</Option>
-                                <Option value='technology' tag='technology'>technology</Option>
-                                <Option value='famous-quotes' tag='famous-quotes'>famous-quotes</Option>
-                                <Option value='wisdom' tag='wisdom'>wisdom</Option>
+                                {allTagsItems}
                         </Select>
                         <Select defaultValue="5" style={{ width: 120 }} onChange={amount}>
                             <Option value="5" limit='5'>5</Option>
