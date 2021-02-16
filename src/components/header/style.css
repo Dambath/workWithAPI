@@ -1,0 +1,35 @@
+.header {
+    padding: 40px 0;
+    background-color: aquamarine;
+}
+.links {
+    font-size: 35px;
+    text-decoration: none;
+    font-weight: 600;
+}
+.list {
+    width: 300px;
+    margin-left: 150px;
+    display: flex;
+    justify-content: space-between;
+}
+.filter {
+    padding: 100px;
+    width: 40%;
+    height: wrap;
+    background-color: cadetblue;
+}
+.selects {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 200px;
+}
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    height: fit-content;
+}
+.quotes-wrapper {
+    display: flex;
+}
