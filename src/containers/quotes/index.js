@@ -15,7 +15,7 @@ function Quotes() {
     const [allTags, setAllTags] = useState([])
 
     useEffect(() => {
-        fetchAll()
+        fetchAll(obj.tags, obj.amount, obj.authorId)
         fetchAuthor()
         fetchAllTags()
     }, [])
@@ -30,17 +30,18 @@ function Quotes() {
 
     const amount = (limit) => {
         setObj({...obj, amount: limit})
-        axios.get(`https://api.quotable.io/quotes?tags=${obj.tags}&limit=${limit}&authorId=${obj.authorId}`).then(res => setQuotes(res.data.results))
+        fetchAll(obj.tags,limit, obj.authorId)
     }
 
     const tags = (tag) => {
         const strtags = tag.join('|')
         setObj({...obj, tags: strtags})
-        axios.get(`https://api.quotable.io/quotes?tags=${strtags}&limit=${obj.amount}&authorId=${obj.authorId}`).then(res => setQuotes(res.data.results))
+        fetchAll(strtags, obj.amount, obj.authorId)
+
     }
 
-    const fetchAll = () => {
-        axios.get(`https://api.quotable.io/quotes?tags=${obj.tags}&limit=${obj.amount}&authorId=${obj.authorId}`).then(res => setQuotes(res.data.results))
+    const fetchAll = (tags, amount, authorId) => {
+        axios.get(`https://api.quotable.io/quotes?tags=${tags}&limit=${amount}&authorId=${authorId}`).then(res => setQuotes(res.data.results))
     }
 
     const fetchAuthor = () => {
@@ -53,10 +54,13 @@ function Quotes() {
 
     const handleAuthors = (id) => {
         setObj({...obj, authorId: id})
-        axios.get(`https://api.quotable.io/quotes?tags=${obj.tags}&limit=${obj.amount}&authorId=${id}`).then(res => setQuotes(res.data.results))
-
+        fetchAll(obj.tags, obj.amount, id)
     } 
 
+    const clearSort = (tags = '', amount = 5, authorId = '') => {
+        axios.get(`https://api.quotable.io/quotes?tags=${tags}&limit=${amount}&authorId=${authorId}`).then(res => setQuotes(res.data.results))
+        setObj({tags: '', amount: 5, authorId: ''})
+    }
 
     return(
         <>
@@ -64,7 +68,7 @@ function Quotes() {
             <div class={'quotes-wrapper'}>
                 <section class={'filter'}>
                     <div class="selects">
-                        <Select style={{ width: 120 }} onChange={handleAuthors}>
+                        <Select style={{ width: 120 }} value={obj.authorId} onChange={handleAuthors}>
                             {authorItems}
                         </Select>
                         <Select
@@ -73,19 +77,22 @@ function Quotes() {
                             style={{ width: '100%' }}
                             placeholder="tags"
                             onChange={tags}
+                            value={obj.tags.split('|')}
                             >
                                 {allTagsItems}
                         </Select>
-                        <Select defaultValue="5" style={{ width: 120 }} onChange={amount}>
+                        <Select value={obj.amount} style={{ width: 120 }} onChange={amount}>
                             <Option value="5" limit='5'>5</Option>
                             <Option value='10' limit='10'>10</Option>
                             <Option value="15" limit='15'>15</Option>
                         </Select>
+                        <button onClick={() => clearSort()}>Clear</button>
                     </div>
                 </section>
                 <div class={'cards'}>
                     {quotesItems}
                 </div>
+
             </div>
         </>    
     )
